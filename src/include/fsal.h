@@ -230,6 +230,8 @@ void destroy_fsals(void);
 void emergency_cleanup_fsals(void);
 void start_fsals(void);
 
+void set_server_scope(char *clstr); /* cluster name or group of nodename*/
+
 void display_fsinfo(struct fsal_module *fsal);
 
 int display_attrlist(struct display_buffer *dspbuf,

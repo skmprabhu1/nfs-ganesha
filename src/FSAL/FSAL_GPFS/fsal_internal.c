@@ -700,6 +700,55 @@ fsal_trucate_by_handle(int dirfd, const struct req_op_context *op_ctx,
 					XATTR_SIZE, &buffxstat, NULL);
 }
 
+/* 
+* remove leading and trailing white space 
+*/
+
+static char *str_trim(char *str)
+{
+  char *end;
+
+  // Trim leading space
+  while(*str && *str == ' ') str++;
+
+  if(*str == 0)  // All spaces?
+    return str;
+
+  // Trim trailing space
+  end = str + strlen(str) - 1;
+  while(end > str && (*end == ' ' || *end == '\n')) end--;
+
+  // Write new null terminator character
+  end[1] = '\0';
+
+  return str;
+}
+
+/* 
+*  Retrive clustername using mmlscluster command and format output.
+*/
+fsal_status_t
+fsal_gpfs_get_clustername(char *clsName)
+{
+  FILE *fp = NULL;
+  char str[MAXNAMLEN+1], *res ;
+
+  // Get GPFS cluter name using mmlscluster command
+  fp = popen("/usr/lpp/mmfs/bin/mmlscluster 2>/dev/null | \
+        /usr/bin/grep 'GPFS cluster name:' | /usr/bin/cut -d ':' -f2 ", "r");
+  if (fp == NULL)
+  {
+     //Failed to fetch clsuter name 
+     return fsalstat(ERR_FSAL_SERVERFAULT, 0);
+  }
+
+  fgets (str, MAXNAMLEN, fp);
+  pclose (fp);
+  res = str_trim(str);
+  strcpy(clsName, res);
+  return fsalstat(ERR_FSAL_NO_ERROR, 0);
+}
+
 /**
  *  @brief Indicates if an FSAL error should be posted as an event
  *

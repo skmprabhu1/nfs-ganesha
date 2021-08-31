@@ -584,4 +584,26 @@ int subfsal_commit(void *node, void *link_mem, void *self_struct,
 	return errcnt;
 }
 
+void set_server_scope(char *clstr)
+{
+        struct fsal_module *fsal;
+        struct glist_head *entry;
+        fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
+
+        PTHREAD_MUTEX_lock(&fsal_lock);
+        glist_for_each(entry, &fsal_list) {
+		/*
+		 *  This function called from exchange-id routine, and we don't know
+		 *  fsal for current request. Better approach would 
+		 *  be go through all the fsal's and find the cluster name.
+		 */
+                fsal = glist_entry(entry, struct fsal_module, fsals);
+                fsal_get(fsal);
+                status = fsal->m_ops.fsal_get_clustername(clstr);
+                if (status.major == ERR_FSAL_NO_ERROR)
+                        break;
+        }
+        PTHREAD_MUTEX_unlock(&fsal_lock);
+}
+
 /** @} */

@@ -243,6 +243,11 @@ static void fsal_reset_stats(struct fsal_module *const fsal_hdl)
 		"Invoking unsupported FSAL operation");
 }
 
+static fsal_status_t fsal_get_clustername( char *clsName)
+{
+	return fsalstat(ERR_FSAL_NOTSUPP, ENOTSUP);
+}
+
 /* Default fsal module method vector.
  * copied to allocated vector at register time
  */
@@ -259,6 +264,7 @@ struct fsal_ops def_fsal_ops = {
 	.fsal_pnfs_ds_ops = fsal_pnfs_ds_ops,
 	.fsal_extract_stats = fsal_extract_stats,
 	.fsal_reset_stats = fsal_reset_stats,
+	.fsal_get_clustername = fsal_get_clustername,
 };
 
 /* get_name

@@ -232,6 +232,7 @@ MODULE_INIT void gpfs_init(void)
 	myself->m_ops.fsal_extract_stats = fsal_gpfs_extract_stats;
 #endif
 	myself->m_ops.fsal_reset_stats = fsal_gpfs_reset_stats;
+	myself->m_ops.fsal_get_clustername = fsal_gpfs_get_clustername;
 
 	/* Initialize the fsal_obj_handle ops for FSAL GPFS */
 	gpfs_handle_ops_init(&GPFS.handle_ops);

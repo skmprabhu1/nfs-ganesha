@@ -349,6 +349,8 @@ void fsal_gpfs_reset_stats(struct fsal_module *fsal_hdl);
 
 void prepare_for_stats(struct fsal_module *fsal_hdl);
 
+fsal_status_t fsal_gpfs_get_clustername(char *clsName);
+
 int gpfs_op2index(int op);
 uint64_t get_handle2inode(struct gpfs_file_handle *gfh);
 

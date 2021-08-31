@@ -631,6 +631,8 @@ struct fsal_ops {
  */
 	void (*fsal_reset_stats)(struct fsal_module *const fsal_hdl);
 
+	fsal_status_t (*fsal_get_clustername) (char *cls);
+
 /**@}*/
 };
 

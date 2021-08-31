@@ -85,6 +85,7 @@ int get_raddr(SVCXPRT *xprt)
 
 char cid_server_owner[MAXNAMLEN+1]; /* max hostname length */
 char *cid_server_scope_suffix = "_NFS-Ganesha";
+char cid_server_scope[MAXNAMLEN+1]; /* cluster name */
 
 /**
  * @brief The NFS4_OP_EXCHANGE_ID operation
@@ -147,6 +148,14 @@ int nfs4_op_exchange_id(struct nfs_argop4 *op, compound_data_t *data,
 				== -1) {
 			res_EXCHANGE_ID4->eir_status = NFS4ERR_SERVERFAULT;
 			return res_EXCHANGE_ID4->eir_status;
+		}
+
+		set_server_scope(cid_server_scope);
+
+	        /* If server scope is not set, then use hostname as server scope.
+        	*/
+		if (cid_server_scope[0] == '\0') {
+			strcpy(cid_server_scope,cid_server_owner);
 		}
 	}
 
@@ -389,8 +398,9 @@ int nfs4_op_exchange_id(struct nfs_argop4 *op, compound_data_t *data,
 
 	res_EXCHANGE_ID4_ok->eir_server_owner.so_minor_id = 0;
 
+	owner_len = strlen(cid_server_scope);
 	temp = gsh_malloc(owner_len + scope_len + 1);
-	memcpy(temp, cid_server_owner, owner_len);
+	memcpy(temp, cid_server_scope, owner_len);
 	memcpy(temp + owner_len, cid_server_scope_suffix, scope_len + 1);
 
 	res_EXCHANGE_ID4_ok->eir_server_scope.eir_server_scope_len =
